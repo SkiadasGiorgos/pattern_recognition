@@ -22,7 +22,7 @@ def distribution_prices(x, mu, sigma):
     return p
 
 
-print(distribution_prices(x, mu_1, sigma))
+# print(distribution_prices(x, mu_1, sigma))
 
 
 def probability_distribution(x, mu_1, mu_2, sigma_1, sigma_2):
@@ -54,7 +54,7 @@ def discriminant_function(x, mu, sigma, a_priori):
     return g
 
 
-print(discriminant_function(x, mu_2, sigma, p_omega_2))
+# print(discriminant_function(x, mu_2, sigma, p_omega_2))
 
 def bayes_error(p_omega_1,p_omega_2,mu_1,mu_2,sigma):
     case_1 = discriminant_function(x, mu_1, sigma, p_omega_1)
