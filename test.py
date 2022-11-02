@@ -40,11 +40,11 @@ def probability_distribution(x, mu_1, mu_2, sigma_1, sigma_2):
                                             1 / (pow((2 * np.pi), (d / 2)) * np.sqrt(np.linalg.det(sigma))) * np.exp(
                                                 -0.5 * np.matmul(
                                                     np.matmul(np.transpose(x[i, j] - mu_1), np.linalg.inv(sigma)),
-                                                    (x[i, j] - mu_1))) + 1 / (
+                                                    (x[i, j] - mu_1))) * p_omega_1 + 1 / (
                                                     pow((2 * np.pi), (d / 2)) * np.sqrt(np.linalg.det(sigma))) * np.exp(
                                                 -0.5 * np.matmul(
                                                     np.matmul(np.transpose(x[i, j] - mu_2), np.linalg.inv(sigma)),
-                                                    (x[i, j] - mu_2))))
+                                                    (x[i, j] - mu_2)))) * p_omega_2
 
     return probability_distrib
 
