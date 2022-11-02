@@ -10,20 +10,24 @@ p_omega_1 = 0.95
 p_omega_2 = 0.05
 
 sigma = np.array([[1.5, 0], [0, .8]])
-x = np.array([1, 0])
 # x_0 = np.arange(-5,6,1)
 # x_1 = np.arange(-5,6,1)
 x_0 = np.arange(-10, 11, 1)
 x_1 = np.arange(-10, 11, 1)
-a = np.array([x_0, x_1]).transpose()
+x = np.array([x_0, x_1]).transpose()
 x_0, x_1 = np.meshgrid(x_0, x_1)
-
 
 # Answer to question 1
 def distribution_value(x, mu, sigma):
     d = mu.shape[0]
-    p = 1 / (pow((2 * np.pi), (d / 2)) * np.sqrt(np.linalg.det(sigma))) * np.exp(
-        -0.5 * np.matmul(np.matmul(np.transpose(x - mu), np.linalg.inv(sigma)), (x - mu)))
+    if not (isinstance(x, (int, np.integer))):
+        p = np.zeros(x.shape[0])
+        for i in range(x.shape[0] - 1):
+            p = np.append(p, 1 / (pow((2 * np.pi), (d / 2)) * np.sqrt(np.linalg.det(sigma))) * np.exp(
+                -0.5 * np.matmul(np.matmul(np.transpose(x[i,:] - mu), np.linalg.inv(sigma)), (x[i,:] - mu))))
+    else:
+        p = 1 / (pow((2 * np.pi), (d / 2)) * np.sqrt(np.linalg.det(sigma))) * np.exp(
+            -0.5 * np.matmul(np.matmul(np.transpose(x - mu), np.linalg.inv(sigma)), (x - mu)))
     return p
 
 
@@ -47,7 +51,7 @@ def probability_distribution(x, mu_1, mu_2, sigma):
     return probability_distrib
 
 
-print(probability_distribution(a, mu_1, mu_2, sigma))
+print(probability_distribution(x, mu_1, mu_2, sigma))
 
 
 def discriminant_function(x_0, x_1, mu, sigma, a_priori):
@@ -76,7 +80,7 @@ ax = plt.axes(projection='3d')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
-# plt.show()
+plt.show()
 
 
 # def bayes_error(p_omega_1, p_omega_2, mu_1, mu_2, sigma):
