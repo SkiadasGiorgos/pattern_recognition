@@ -31,19 +31,18 @@ def distribution_values(x, mu, sigma):
             -0.5 * np.matmul(np.matmul(np.transpose(x - mu), np.linalg.inv(sigma)), (x - mu)))
     return p
 
-fig1, ax1 = plt.subplots(subplot_kw={"projection": "3d"})
-distribution_values_1 = distribution_values(x, mu_1, sigma)
-distribution_values_2 = distribution_values(x, mu_2, sigma)
-fig = plt.figure()
-fig.add_subplot()
-surface_mu_1= ax1.plot_surface(x_0, x_1, distribution_values_1)
-surface_mu_2= ax1.plot_surface(x_0, x_1, distribution_values_2)
-plt.show()
-
-
-
 # Answer to question 2
 def probability_distribution(distribution_values_1, distribution_values_2):
+
+    probability_distrib = np.zeros([distribution_values_1.shape[0], distribution_values_1.shape[1]])
+
+    for i in range(distribution_values_1.shape[0]):
+        for j in range(distribution_values_1.shape[1]):
+            probability_distrib[i][j] = distribution_values_1[i][j] * p_omega_1 + distribution_values_2[i][j] * p_omega_2
+
+    return probability_distrib
+
+def probability_distribution2(distribution_values_1, distribution_values_2):
 
     probability_distrib = np.array([])
 
@@ -53,9 +52,16 @@ def probability_distribution(distribution_values_1, distribution_values_2):
     return probability_distrib
 
 
+fig1, ax1 = plt.subplots(subplot_kw={"projection": "3d"})
 distribution_values_1 = distribution_values(x, mu_1, sigma)
 distribution_values_2 = distribution_values(x, mu_2, sigma)
-print(probability_distribution(distribution_values_1, distribution_values_2))
+probability_distribution = probability_distribution(distribution_values_1, distribution_values_2)
+fig = plt.figure()
+fig.add_subplot()
+surface_mu_1= ax1.plot_surface(x_0, x_1, distribution_values_1)
+surface_mu_2= ax1.plot_surface(x_0, x_1, distribution_values_2)
+surface_probability_distribution = ax1.plot_surface(x_0, x_1, probability_distribution)
+plt.show()
 
 
 def discriminant_function(x_0, x_1, mu, sigma, a_priori):
@@ -74,16 +80,16 @@ fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 x = discriminant_function(x_0, x_1, mu_2, sigma, p_omega_2)
 y = discriminant_function(x_0, x_1, mu_1, sigma, p_omega_1)
 
-fig = plt.figure()
-fig.add_subplot()
-surf = ax.plot_surface(x_0, x_1, x)
-surf = ax.plot_surface(x_0, x_1, y)
-plt.rcParams['figure.figsize'] = [10, 5]
-
-ax = plt.axes(projection='3d')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')
+# fig = plt.figure()
+# fig.add_subplot()
+# surf = ax.plot_surface(x_0, x_1, x)
+# surf = ax.plot_surface(x_0, x_1, y)
+# plt.rcParams['figure.figsize'] = [10, 5]
+#
+# ax = plt.axes(projection='3d')
+# ax.set_xlabel('x')
+# ax.set_ylabel('y')
+# ax.set_zlabel('z')
 #plt.show()
 
 
