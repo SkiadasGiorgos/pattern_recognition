@@ -4,6 +4,8 @@ import scipy as sc
 import matplotlib
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
+import math
+
 
 mu_1 = np.array([0.4, 0.8])
 mu_2 = np.array([1.5, 2.7])
@@ -11,9 +13,11 @@ p_omega_1 = 0.95
 p_omega_2 = 0.05
 
 sigma = np.array([[1.5, 0], [0, .8]])
+sigma_2 = np.divide(sigma, 4)
+
 x = np.array([1, 0])
-x_0 = np.arange(-10, 10, .1)
-x_1 = np.arange(-10, 10, .1)
+x_0 = np.arange(0, 50, 1)
+x_1 = np.arange(0, 50, 1)
 x_0, x_1 = np.meshgrid(x_0, x_1)
 
 
@@ -28,7 +32,15 @@ def distribution_prices(x_0, x_1, mu, sigma):
     return p
 
 
-# print(distribution_prices(x_0,x_1,mu_1, sigma))
+#
+# distribution_prices_1 = distribution_prices(x_0, x_1, mu_1, sigma)
+# distribution_prices_2 = distribution_prices(x_0, x_1, mu_2, sigma)
+# fig = plt.figure()
+# fig.add_subplot()
+# ax = plt.axes(projection='3d')
+# surface_mu_1 = ax.plot_surface(x_0, x_1, distribution_prices_1)
+# surface_mu_2 = ax.plot_surface(x_0, x_1, distribution_prices_2)
+# plt.show()
 
 
 def probability_distribution(x_0, x_1, mu_1, mu_2, sigma_1, sigma_2):
@@ -39,12 +51,14 @@ def probability_distribution(x_0, x_1, mu_1, mu_2, sigma_1, sigma_2):
     return probability_distrib
 
 
-distribution = probability_distribution(x_0, x_1, mu_1, mu_2, sigma, sigma)
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-surface_mu_1 = ax.plot_surface(x_0, x_1, distribution)
-plt.show()
-
+#
+#
+# distribution = probability_distribution(x_0, x_1, mu_1, mu_2, sigma, sigma_2)
+# fig = plt.figure()
+# ax = plt.axes(projection='3d')
+# probability_of_surface = ax.plot_surface(x_0, x_1, distribution)
+# plt.show()
+#
 
 def discriminant_function(x_0, x_1, mu, sigma, a_priori):
     g = np.zeros([x_0.shape[0], x_0.shape[1]])
@@ -53,27 +67,25 @@ def discriminant_function(x_0, x_1, mu, sigma, a_priori):
         for j in range(x_1.shape[0]):
             g[i][j] = -0.5 * np.matmul(
                 np.matmul(np.transpose(np.subtract([x_0[i][j], x_1[i][j]], mu)), np.linalg.inv(sigma)),
-                (np.subtract([x_0[i][j], x_1[i][j]], mu))) + np.log(a_priori)
-
+                (np.subtract([x_0[i][j], x_1[i][j]], mu))) + 0.5*np.log(np.linalg.det(sigma))
     return g
 
 
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
+x = discriminant_function(x_0, x_1, mu_2, sigma_2, p_omega_2)
+y = discriminant_function(x_0, x_1, mu_1, sigma, p_omega_1)
 
-# x = discriminant_function(x_0, x_1, mu_2, sigma, p_omega_2)
-# y = discriminant_function(x_0, x_1, mu_1, sigma, p_omega_1)
-#
-# fig = plt.figure()
-# fig.add_subplot()
-# surf = ax.plot_surface(x_0, x_1, x)
-# surf = ax.plot_surface(x_0, x_1, y)
-#
-# ax = plt.axes(projection='3d')
-# ax.set_xlabel('x')
-# ax.set_ylabel('y')
-# ax.set_zlabel('z')
-# plt.show()
+fig = plt.figure()
+fig.add_subplot()
+surf = ax.plot_surface(x_0, x_1, x)
+surf = ax.plot_surface(x_0, x_1, y)
+
+ax = plt.axes(projection='3d')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+plt.show()
 
 
 def bayes_error(p_omega_1, p_omega_2, mu_1, mu_2, sigma):
