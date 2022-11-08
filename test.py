@@ -31,6 +31,16 @@ def distribution_values(x, mu, sigma):
             -0.5 * np.matmul(np.matmul(np.transpose(x - mu), np.linalg.inv(sigma)), (x - mu)))
     return p
 
+
+distribution_values_1 = distribution_values(x, mu_1, sigma)
+distribution_values_2 = distribution_values(x, mu_2, sigma)
+
+fig = plt.figure()
+fig.add_subplot()
+ax = plt.axes(projection='3d')
+surface_mu_1= ax.plot_surface(x_0, x_1, distribution_values_1)
+surface_mu_2= ax.plot_surface(x_0, x_1, distribution_values_2)
+
 # Answer to question 2
 def probability_distribution(distribution_values_1, distribution_values_2):
 
@@ -42,56 +52,30 @@ def probability_distribution(distribution_values_1, distribution_values_2):
 
     return probability_distrib
 
-def probability_distribution2(distribution_values_1, distribution_values_2):
-
-    probability_distrib = np.array([])
-
-    for i in range(distribution_values_1.shape[0]):
-        probability_distrib = np.append(probability_distrib, distribution_values_1[i] * p_omega_1 + distribution_values_2[i] * p_omega_2)
-
-    return probability_distrib
-
-
-fig1, ax1 = plt.subplots(subplot_kw={"projection": "3d"})
-distribution_values_1 = distribution_values(x, mu_1, sigma)
-distribution_values_2 = distribution_values(x, mu_2, sigma)
 probability_distribution = probability_distribution(distribution_values_1, distribution_values_2)
+
 fig = plt.figure()
-fig.add_subplot()
-surface_mu_1= ax1.plot_surface(x_0, x_1, distribution_values_1)
-surface_mu_2= ax1.plot_surface(x_0, x_1, distribution_values_2)
-surface_probability_distribution = ax1.plot_surface(x_0, x_1, probability_distribution)
-plt.show()
+ax = plt.axes(projection='3d')
+surface_probability_distribution = ax.plot_surface(x_0, x_1, probability_distribution)
 
+def discriminant_function(x, mu, sigma, a_priori):
+    g = np.zeros([x.shape[0], x.shape[1]])
 
-def discriminant_function(x_0, x_1, mu, sigma, a_priori):
-    g = np.zeros([x_0.shape[0], x_0.shape[1]])
-
-    for i in range(x_0.shape[0]):
-        for j in range(x_1.shape[0]):
-            g[i][j] = -0.5 * np.matmul(np.matmul(np.transpose(([x_0[i][j], x_1[i][j]] - mu)), np.linalg.inv(sigma)),
-                                       ([x_0[i][j], x_1[i][j]] - mu)) + np.log(a_priori)
-
+    for i in range(x.shape[0]):
+        for j in range(x.shape[0]):
+            g[i][j] = -0.5 * np.matmul(np.matmul(np.transpose(x[i][j] - mu), np.transpose(sigma)), (x[i][j] - mu)) + np.log(a_priori)
     return g
 
 
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+g_1 = discriminant_function(x, mu_1, sigma, p_omega_1)
+g_2 = discriminant_function(x, mu_2, sigma, p_omega_2)
 
-x = discriminant_function(x_0, x_1, mu_2, sigma, p_omega_2)
-y = discriminant_function(x_0, x_1, mu_1, sigma, p_omega_1)
-
-# fig = plt.figure()
-# fig.add_subplot()
-# surf = ax.plot_surface(x_0, x_1, x)
-# surf = ax.plot_surface(x_0, x_1, y)
-# plt.rcParams['figure.figsize'] = [10, 5]
-#
-# ax = plt.axes(projection='3d')
-# ax.set_xlabel('x')
-# ax.set_ylabel('y')
-# ax.set_zlabel('z')
-#plt.show()
-
+fig = plt.figure()
+fig.add_subplot()
+ax = plt.axes(projection='3d')
+surface_g_1= ax.plot_surface(x_0, x_1, g_1)
+surface_g_2= ax.plot_surface(x_0, x_1, g_2)
+plt.show()
 
 # def bayes_error(p_omega_1, p_omega_2, mu_1, mu_2, sigma):
 #     case_1 = discriminant_function(x, mu_1, sigma, p_omega_1)
