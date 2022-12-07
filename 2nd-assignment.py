@@ -86,8 +86,8 @@ best_theta_2 = theta_array[
     logLikelihood2.index(max(logLikelihood2))]  # Find the x value corresponding to the maximum y value
 print("Estimation of theta 2: ", best_theta_2)
 
-class_1, class_2, values_class_1, values_class_2  = predict(np.concatenate((d1, d2)), best_theta_1, best_theta_2, a_priori_1, a_priori_2)
-
+class_1, class_2, values_class_1, values_class_2 = predict(np.concatenate((d1, d2)), best_theta_1, best_theta_2,
+                                                           a_priori_1, a_priori_2)
 
 likelihood1 = calculate_likelihood(theta_array, d1)
 likelihood2 = calculate_likelihood(theta_array, d2)
@@ -96,6 +96,7 @@ posterior1 = posterior_distribution(likelihood1, p_theta, theta_array)
 posterior2 = posterior_distribution(likelihood2, p_theta, theta_array)
 
 print(max(p_theta))
+
 
 # plt.plot(theta_array, posterior1)
 # plt.plot(theta_array, posterior2)
@@ -116,12 +117,39 @@ print(max(p_theta))
 # plt.title('Log likelihood over a range of theta values for d2')
 # plt.show()
 
-# color = ['red' if x in d1 else 'blue' for x in class_1]
-labels = ['$ class: \omega_1$', '$ class: \omega_2$', 'Decision rule']
-plt.scatter(class_1, values_class_1)
-plt.scatter(class_2, values_class_2)
-plt.axhline(y=0, color="black", linestyle='--')
-plt.xlabel('x')
-plt.ylabel('g(x)')
-plt.legend(labels=labels)
+
+def color_assignment(given_class, d1, d2):
+    color = []
+    for i in range(np.size(given_class)):
+        if given_class[i] in d1:
+            color.append(0)
+        elif given_class[i] in d2:
+            color.append(1)
+    return color
+
+
+color_class_1 = color_assignment(class_1, d1, d2)
+color_class_2 = color_assignment(class_2, d1, d2)
+
+# color = ['red' if classes in d1 else 'blue' for classes in d2]
+
+print(class_1)
+print(color_class_1)
+
+print(class_2)
+print(color_class_2)
+
+colors = np.concatenate((color_class_1, color_class_2))
+print(colors)
+labels = ['$ class: \omega_1$', '$ class: \omega_2$', '$ Decision rule']
+
+fig, ax = plt.subplots()
+scatter = ax.scatter([class_1, class_2], [values_class_1, values_class_2], c=colors)
+ax.axhline(y=0, color="black", linestyle='--')
+ax.set_xlabel('x')
+ax.set_ylabel('g(x)')
+ax.annotate("Decision Rule", xy=(2, 0), xytext=(2, 1.5), arrowprops=dict(facecolor='black', shrink=0.0001))
+handles = scatter.legend_elements(num=[0, 1])[0]
+ax.legend(handles=handles, labels=labels)
+
 plt.show()
