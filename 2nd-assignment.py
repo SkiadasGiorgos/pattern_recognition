@@ -148,31 +148,29 @@ def color_assignment(given_class, d1, d2):
 # ax.legend(handles=handles, labels=labels)
 # plt.show()
 
-def q2_part2(theta, d1, d2, posterior1, posterior2):
+def probability_density_function(theta, d1, d2, posterior1, posterior2):
     prob_distr = []
-    prob_distr2 = []
+    # one array to store distribution values, in order not to concatenate two arrays later.
     for x in d1:
         prob_distr.append(probability_distribution(x, theta))
     for x in d2:
         prob_distr.append(probability_distribution(x, theta))
 
-    p_x_d1 = np.trapz(np.multiply(prob_distr, posterior1), x=theta)
-    p_x_d2 = np.trapz(np.multiply(prob_distr, posterior2), x=theta)
+    d1_pdf = np.trapz(np.multiply(prob_distr, posterior1), x=theta)
+    d2_pdf = np.trapz(np.multiply(prob_distr, posterior2), x=theta)
 
-    return p_x_d1, p_x_d2
+    return d1_pdf, d2_pdf
 
 
-p_x_d1, p_x_d2 = q2_part2(theta_array, d1, d2, posterior1, posterior2)
+d1_pdf,d2_pdf = probability_density_function(theta_array, d1, d2, posterior1, posterior2)
 
-print(p_x_d1, p_x_d2)
-
-def predict_part2(p_x_d1, p_x_d2, priori_1, priori_2, d):
+def predict_part2(d1_pdf, d2_pdf, priori_1, priori_2, d):
     class_1 = []
     class_2 = []
     values_class_1 = []
     values_class_2 = []
-    for i in range(p_x_d1.shape[0]):
-        discriminant_function = np.log(p_x_d1[i]) - np.log(p_x_d2[i]) + np.log(priori_1) - np.log(priori_2)
+    for i in range(d1_pdf.shape[0]):
+        discriminant_function = np.log(d1_pdf[i]) - np.log(d2_pdf[i]) + np.log(priori_1) - np.log(priori_2)
         if discriminant_function > 0:
             class_1.append(d[i])
             values_class_1.append(discriminant_function)
@@ -182,7 +180,7 @@ def predict_part2(p_x_d1, p_x_d2, priori_1, priori_2, d):
     return class_1, class_2,values_class_1, values_class_2
 
 
-class_1, class_2, values_class_1, values_class_2 = predict_part2(p_x_d1, p_x_d2, a_priori_1, a_priori_2,
+class_1, class_2, values_class_1, values_class_2 = predict_part2(d1_pdf, d2_pdf, a_priori_1, a_priori_2,
                                                                  np.concatenate((d1, d2)))
 
 
