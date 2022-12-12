@@ -95,16 +95,17 @@ p_theta = prior_distribution(theta_array)
 posterior1 = posterior_distribution(likelihood1, p_theta, theta_array)
 posterior2 = posterior_distribution(likelihood2, p_theta, theta_array)
 
-print(max(p_theta))
 
-
+# print(max(p_theta))
+#
+#
 # plt.plot(theta_array, posterior1)
 # plt.plot(theta_array, posterior2)
 # plt.plot(theta_array, p_theta)
 # plt.xlabel('theta')
-# plt.title("$ P(\theta | D1) $")
+# plt.title("$ P(\theta | D_j) $")
 # plt.show()
-
+#
 # plt.plot(theta_array, LL1)
 # plt.xlabel('theta')
 # plt.ylabel('Log-likelihood')
@@ -128,28 +129,76 @@ def color_assignment(given_class, d1, d2):
     return color
 
 
+#
+#
+# color_class_1 = color_assignment(class_1, d1, d2)
+# color_class_2 = color_assignment(class_2, d1, d2)
+#
+# colors = np.concatenate((color_class_1, color_class_2))
+# print(colors)
+# labels = ['$ class: \omega_1$', '$ class: \omega_2$', '$ Decision rule']
+#
+# fig, ax = plt.subplots()
+# scatter = ax.scatter([class_1, class_2], [values_class_1, values_class_2], c=colors)
+# ax.axhline(y=0, color="black", linestyle='--')
+# ax.set_xlabel('x')
+# ax.set_ylabel('g(x)')
+# ax.annotate("Decision Rule", xy=(2, 0), xytext=(2, 1.5), arrowprops=dict(facecolor='black', shrink=0.0001))
+# handles = scatter.legend_elements(num=[0, 1])[0]
+# ax.legend(handles=handles, labels=labels)
+# plt.show()
+
+def q2_part2(theta, d1, d2, posterior1, posterior2):
+    prob_distr = []
+    prob_distr2 = []
+    for x in d1:
+        prob_distr.append(probability_distribution(x, theta))
+    for x in d2:
+        prob_distr.append(probability_distribution(x, theta))
+
+    p_x_d1 = np.trapz(np.multiply(prob_distr, posterior1), x=theta)
+    p_x_d2 = np.trapz(np.multiply(prob_distr, posterior2), x=theta)
+
+    return p_x_d1, p_x_d2
+
+
+p_x_d1, p_x_d2 = q2_part2(theta_array, d1, d2, posterior1, posterior2)
+
+print(p_x_d1, p_x_d2)
+
+def predict_part2(p_x_d1, p_x_d2, priori_1, priori_2, d):
+    class_1 = []
+    class_2 = []
+    values_class_1 = []
+    values_class_2 = []
+    for i in range(p_x_d1.shape[0]):
+        discriminant_function = np.log(p_x_d1[i]) - np.log(p_x_d2[i]) + np.log(priori_1) - np.log(priori_2)
+        if discriminant_function > 0:
+            class_1.append(d[i])
+            values_class_1.append(discriminant_function)
+        else:
+            class_2.append(d[i])
+            values_class_2.append(discriminant_function)
+    return class_1, class_2,values_class_1, values_class_2
+
+
+class_1, class_2, values_class_1, values_class_2 = predict_part2(p_x_d1, p_x_d2, a_priori_1, a_priori_2,
+                                                                 np.concatenate((d1, d2)))
+
+
 color_class_1 = color_assignment(class_1, d1, d2)
 color_class_2 = color_assignment(class_2, d1, d2)
-
-# color = ['red' if classes in d1 else 'blue' for classes in d2]
-
-print(class_1)
-print(color_class_1)
-
-print(class_2)
-print(color_class_2)
 
 colors = np.concatenate((color_class_1, color_class_2))
 print(colors)
 labels = ['$ class: \omega_1$', '$ class: \omega_2$', '$ Decision rule']
 
 fig, ax = plt.subplots()
-scatter = ax.scatter([class_1, class_2], [values_class_1, values_class_2], c=colors)
+scatter = ax.scatter(np.concatenate((class_1, class_2)), np.concatenate((values_class_1, values_class_2)), c=colors)
 ax.axhline(y=0, color="black", linestyle='--')
 ax.set_xlabel('x')
 ax.set_ylabel('g(x)')
 ax.annotate("Decision Rule", xy=(2, 0), xytext=(2, 1.5), arrowprops=dict(facecolor='black', shrink=0.0001))
 handles = scatter.legend_elements(num=[0, 1])[0]
 ax.legend(handles=handles, labels=labels)
-
 plt.show()
