@@ -1,1 +1,1 @@
-# Pattern Recognition, 9th semester, ECE AUTH
+# Patter Recognition Course, 9th Semester, ECE AUTH
